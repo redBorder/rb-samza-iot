@@ -58,14 +58,33 @@ public class PsqlStore extends WindowStore {
         Statement st = null;
         ResultSet rs = null;
         long entries = 0L;
-        Map<String, Map<String, Object>> result = null;
+        Map<String, Map<String, Object>> result = new HashMap<>();
         try {
             if (conn != null) {
                 st = conn.createStatement();
-                rs = st.executeQuery("QUERY");
+                rs = st.executeQuery("SELECT DISTINCT ON (iot_sensors.uuid) iot_sensors.uuid AS sensor_uuid, iot_sensors.latitude" +
+                        " AS latitude, iot_sensors.longitude AS longitude, floors.name AS floor, floors.uuid" +
+                        " AS floor_uuid, buildings.name AS building, buildings.uuid AS building_uuid, campuses.name" +
+                        " AS campus, campuses.uuid AS campus_uuid, deployments.name AS deployment, deployments.uuid AS" +
+                        " deployment_uuid, namespaces.name AS namespace, namespaces.uuid AS namespace_uuid," +
+                        " markets.name AS market, markets.uuid AS market_uuid, organizations.name AS organization," +
+                        " organizations.uuid AS organization_uuid, service_providers.name AS service_provider," +
+                        " service_providers.uuid AS service_provider_uuid FROM iot_sensors JOIN sensors ON iot_sensors.sensor_id" +
+                        " = sensors.id LEFT JOIN (SELECT * FROM sensors WHERE domain_type=101) AS floors ON floors.lft" +
+                        " <= sensors.lft AND floors.rgt >= sensors.rgt LEFT JOIN (SELECT * FROM sensors WHERE domain_type=5)" +
+                        " AS buildings ON buildings.lft <= sensors.lft AND buildings.rgt >= sensors.rgt LEFT JOIN " +
+                        "(SELECT * FROM sensors WHERE domain_type=4) AS campuses ON campuses.lft <= sensors.lft AND" +
+                        " campuses.rgt >= sensors.rgt LEFT JOIN (SELECT * FROM sensors WHERE domain_type=7) " +
+                        "AS deployments ON deployments.lft <= sensors.lft AND deployments.rgt >= sensors.rgt " +
+                        "LEFT JOIN (SELECT * FROM sensors WHERE domain_type=8) AS namespaces ON namespaces.lft" +
+                        " <= sensors.lft AND namespaces.rgt >= sensors.rgt LEFT JOIN " +
+                        "(SELECT * FROM sensors WHERE domain_type=3) AS markets " +
+                        "ON markets.lft <= sensors.lft AND markets.rgt >= sensors.rgt LEFT JOIN (SELECT * FROM sensors" +
+                        " WHERE domain_type=2) AS organizations ON organizations.lft <= sensors.lft AND " +
+                        "organizations.rgt >= sensors.rgt LEFT JOIN (SELECT * FROM sensors WHERE domain_type=6)" +
+                        " AS service_providers ON service_providers.lft <= sensors.lft AND service_providers.rgt" +
+                        " >= sensors.rgt;");
                 ObjectMapper mapper = new ObjectMapper();
-
-                Map<String, Map<String, Object>> tmpCache = new HashMap<>();
 
                 while (rs.next()) {
                     Map<String, Object> location = new HashMap<>();
@@ -103,22 +122,13 @@ public class PsqlStore extends WindowStore {
 
                     location.putAll(enriching);
 
-                    result = new HashMap<>();
                     if (!location.isEmpty()) {
                         log.debug("IOT: {} LOCATION: {}", rs.getString("sensor_uuid"), location);
 
                         String sensorUUID = rs.getString("sensor_uuid");
 
                         if (sensorUUID != null) {
-                            tmpCache.put(sensorUUID, location);
                             result.put(sensorUUID, location);
-                        }
-
-                        String proxyUUID = rs.getString("proxy_uuid");
-
-                        if (proxyUUID != null) {
-                            tmpCache.put(proxyUUID, location);
-                            result.put(proxyUUID, location);
                         }
                     }
                 }

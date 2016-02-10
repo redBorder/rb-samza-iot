@@ -24,6 +24,6 @@ public class IotProcessor extends Processor {
 
     @Override
     public String getName() {
-        return null;
+        return "IOT";
     }
 }
