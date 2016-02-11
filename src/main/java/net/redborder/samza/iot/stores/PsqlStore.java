@@ -19,7 +19,7 @@ public class PsqlStore extends WindowStore {
     private Config config;
 
     private final String[] enrichColumns = {"campus", "building", "floor", "deployment",
-            "namespace", "market", "organization", "service_provider", "zone", "campus_uuid",
+            "namespace", "market", "organization", "service_provider", "campus_uuid",
             "building_uuid", "floor_uuid", "deployment_uuid", "namespace_uuid", "market_uuid",
             "organization_uuid", "service_provider_uuid"};
 
@@ -51,13 +51,14 @@ public class PsqlStore extends WindowStore {
                 e.printStackTrace();
             }
         }
+
+        log.info("Created PSQL connector [{}]", conn);
     }
 
     @Override
     public Map<String, Map<String, Object>> update() {
         Statement st = null;
         ResultSet rs = null;
-        long entries = 0L;
         Map<String, Map<String, Object>> result = new HashMap<>();
         try {
             if (conn != null) {
@@ -84,25 +85,10 @@ public class PsqlStore extends WindowStore {
                         "organizations.rgt >= sensors.rgt LEFT JOIN (SELECT * FROM sensors WHERE domain_type=6)" +
                         " AS service_providers ON service_providers.lft <= sensors.lft AND service_providers.rgt" +
                         " >= sensors.rgt;");
-                ObjectMapper mapper = new ObjectMapper();
 
                 while (rs.next()) {
                     Map<String, Object> location = new HashMap<>();
                     Map<String, String> enriching = new HashMap<>();
-
-                    String enrichmentStr = rs.getString("enrichment");
-                    if (enrichmentStr != null) {
-                        try {
-                            Map<String, String> enrichment = mapper.readValue(enrichmentStr, Map.class);
-                            enriching.putAll(enrichment);
-                        } catch (JsonMappingException e) {
-                            e.printStackTrace();
-                        } catch (JsonParseException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
 
                     String longitude = rs.getString("longitude");
                     String latitude = rs.getString("latitude");
@@ -111,8 +97,6 @@ public class PsqlStore extends WindowStore {
                         String columnData = rs.getString(columnName);
                         if (columnData != null) enriching.put(columnName, columnData);
                     }
-
-                    entries++;
 
                     if (longitude != null && latitude != null) {
                         Double longitudeDbl = (double) Math.round(Double.valueOf(longitude) * 100000) / 100000;
@@ -133,7 +117,7 @@ public class PsqlStore extends WindowStore {
                     }
                 }
 
-                log.info("PostgreSql updated! Entries: " + entries);
+                log.info("PostgreSql updated! Entries: " + result.size());
             } else {
                 log.warn("You must init the DB connection first!");
                 prepare(config);

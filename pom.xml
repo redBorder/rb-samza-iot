@@ -46,7 +46,14 @@
         <dependency>
             <groupId>net.redborder</groupId>
             <artifactId>rb-samza-streaming</artifactId>
-            <version>0.4.0</version>
+            <version>0.3.2</version>
+        </dependency>
+
+        <!-- PostgreSQL -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.3-1102-jdbc41</version>
         </dependency>
     </dependencies>
 
