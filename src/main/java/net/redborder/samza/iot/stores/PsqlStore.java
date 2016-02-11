@@ -1,4 +1,4 @@
-package net.redborder.samza.stores;
+package net.redborder.samza.iot.stores;
 
 import net.redborder.samza.store.WindowStore;
 import org.apache.samza.config.Config;

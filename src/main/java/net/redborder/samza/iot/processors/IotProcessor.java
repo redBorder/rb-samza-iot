@@ -1,6 +1,7 @@
-package net.redborder.samza.processors;
+package net.redborder.samza.iot.processors;
 
 import net.redborder.samza.enrichments.EnrichManager;
+import net.redborder.samza.processors.Processor;
 import net.redborder.samza.store.StoreManager;
 import org.apache.samza.config.Config;
 import org.apache.samza.system.OutgoingMessageEnvelope;
