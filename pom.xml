@@ -4,11 +4,11 @@
 
     <groupId>net.redborder</groupId>
     <artifactId>rb-samza-iot</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
 
     <scm>
         <developerConnection>scm:git:git@gitlab.redborder.lan:bigdata/rb-samza-iot.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>rb-samza-iot-0.0.2</tag>
     </scm>
 
     <distributionManagement>
