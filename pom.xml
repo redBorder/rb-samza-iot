@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.redborder</groupId>
     <artifactId>rb-samza-iot</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <scm>
         <developerConnection>scm:git:git@gitlab.redborder.lan:bigdata/rb-samza-iot.git</developerConnection>
-        <tag>rb-samza-iot-0.0.2</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
@@ -44,14 +46,7 @@
         <dependency>
             <groupId>net.redborder</groupId>
             <artifactId>rb-samza-streaming</artifactId>
-            <version>0.4.1</version>
-        </dependency>
-
-        <!-- PostgreSQL -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>9.3-1102-jdbc41</version>
+            <version>0.3.1</version>
         </dependency>
     </dependencies>
 
